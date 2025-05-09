@@ -35,7 +35,7 @@ def search_func(query, n_results=NUMBER_OF_RESULTS):
 
     # Sort by similarity and return the top n_results
     df['similarity'] = similarities
-    results = df.sort_values(by='similarity', ascending=False).head(n_results)
+    results = df[df['similarity'] > 0.3].sort_values(by='similarity', ascending=False).head(300) # Limits to 300 results
 
     # Convert results to a list of dictionaries
     results_list = []
@@ -49,6 +49,7 @@ def search_func(query, n_results=NUMBER_OF_RESULTS):
             "score": row['similarity']
         }
         results_list.append(result)
+        
     return results_list
 
 # def cosine_similarity(a, b):
