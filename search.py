@@ -1,25 +1,40 @@
 import pandas as pd
 import numpy as np
+import json
+from data_embedding import model
+from sklearn.metrics.pairwise import cosine_similarity
 
-def search_func(query, n_results=10):
+# Configuration parameters
+METADATA_PATH = 'test_metadata.json'
+EMBEDDINGS_PATH = 'test_embeddings.npy'
+NUMBER_OF_RESULTS = 10
+
+def search_func(query, n_results=NUMBER_OF_RESULTS):
     """
     Search for the query using cosine vector search.
     """
-    
-    # Load the index
-    index_path = "output.json"
-    df = pd.read_json(index_path)
-    df['lastmod'] = pd.to_datetime(df['lastmod'])
-    df['image_url'] = df['image_url'].fillna('')
+    # Load metadata and embeddings
+    metadata_path = METADATA_PATH 
+    embeddings_path = EMBEDDINGS_PATH
 
-    # NOTE: Create a dummy vector for the query
-    # TODO: Replace this with the actual embedding of the query
-    query_vector = np.random.rand(1, 1536)  # Assuming the embedding size is 1536
+    with open(metadata_path, 'r', encoding='utf-8') as f:
+        articles = json.load(f)
+    embeddings = np.load(embeddings_path)  # shape: (N, D)
 
-    # Calculate cosine similarity
-    df['similarity'] = df['embedding'].apply(lambda x: cosine_similarity(np.array(x), query_vector.flatten()))
+    # Create a DataFrame from metadata
+    df = pd.DataFrame(articles)
+    df['lastmod'] = pd.to_datetime(df['lastmod'], errors='coerce')
+    df['image_url'] = df.get('image_url', pd.Series([''] * len(df))).fillna('')
+
+    # Compute query embedding
+    query = query.strip() if query.strip() else "."
+    query_vector = model.encode([query], convert_to_numpy=True, normalize_embeddings=True)  # shape: (1, D)
+
+    # Compute cosine similarity
+    similarities = cosine_similarity(embeddings, query_vector).flatten()  # shape: (N,)F
 
     # Sort by similarity and return the top n_results
+    df['similarity'] = similarities
     results = df.sort_values(by='similarity', ascending=False).head(n_results)
 
     # Convert results to a list of dictionaries
@@ -36,11 +51,11 @@ def search_func(query, n_results=10):
         results_list.append(result)
     return results_list
 
-def cosine_similarity(a, b):
-    """
-    Calculate the cosine similarity between two vectors.
-    """
-    dot_product = np.dot(a, b)
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-    return dot_product / (norm_a * norm_b) if norm_a and norm_b else 0.0
+# def cosine_similarity(a, b):
+#     """
+#     Calculate the cosine similarity between two vectors.
+#     """
+#     dot_product = np.dot(a, b)
+#     norm_a = np.linalg.norm(a)
+#     norm_b = np.linalg.norm(b)
+#     return dot_product / (norm_a * norm_b) if norm_a and norm_b else 0.0
