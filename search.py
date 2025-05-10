@@ -9,17 +9,18 @@ METADATA_PATH = 'test_metadata.json'
 EMBEDDINGS_PATH = 'test_embeddings.npy'
 NUMBER_OF_RESULTS = 10
 
+# Load metadata and embeddings
+metadata_path = METADATA_PATH 
+embeddings_path = EMBEDDINGS_PATH
+
+with open(metadata_path, 'r', encoding='utf-8') as f:
+    articles = json.load(f)
+embeddings = np.load(embeddings_path)  # shape: (N, D)
+
 def search_func(query, n_results=NUMBER_OF_RESULTS):
     """
     Search for the query using cosine vector search.
     """
-    # Load metadata and embeddings
-    metadata_path = METADATA_PATH 
-    embeddings_path = EMBEDDINGS_PATH
-
-    with open(metadata_path, 'r', encoding='utf-8') as f:
-        articles = json.load(f)
-    embeddings = np.load(embeddings_path)  # shape: (N, D)
 
     # Create a DataFrame from metadata
     df = pd.DataFrame(articles)
