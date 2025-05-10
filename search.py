@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # Configuration parameters
 METADATA_PATH = 'test_metadata.json'
 EMBEDDINGS_PATH = 'test_embeddings.npy'
-NUMBER_OF_RESULTS = 10
+NUMBER_OF_RESULTS = 20
 
 # Load metadata and embeddings
 metadata_path = METADATA_PATH 
@@ -36,7 +36,7 @@ def search_func(query, n_results=NUMBER_OF_RESULTS):
 
     # Sort by similarity and return the top n_results
     df['similarity'] = similarities
-    results = df[df['similarity'] > 0.3].sort_values(by='similarity', ascending=False).head(300) # Limits to 300 results
+    results = df[df['similarity'] > 0.3].sort_values(by='similarity', ascending=False).head(n_results) # Limits to 300 results
 
     # Convert results to a list of dictionaries
     results_list = []
@@ -50,7 +50,8 @@ def search_func(query, n_results=NUMBER_OF_RESULTS):
             "score": row['similarity']
         }
         results_list.append(result)
-        
+    # Print a list of scores:
+    print([result['score'] for result in results_list])
     return results_list
 
 # def cosine_similarity(a, b):
