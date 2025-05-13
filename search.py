@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # Configuration parameters
 METADATA_PATH = 'test_metadata.json'
 EMBEDDINGS_PATH = 'test_embeddings.npy'
-NUMBER_OF_RESULTS = 20
+NUMBER_OF_RESULTS = 300
 
 # Load metadata and embeddings
 metadata_path = METADATA_PATH 
