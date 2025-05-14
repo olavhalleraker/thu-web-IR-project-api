@@ -12,8 +12,8 @@ else:
 
 SCORE_THRESHOLD = 0.4
 
-device_name = torch.cuda.get_device_name(0) if device == 'cuda' else 'Metal Performance Shaders' if device == 'mps' else ''
-print(f"Using device: {device} {device_name}")
+# device_name = torch.cuda.get_device_name(0) if device == 'cuda' else 'Metal Performance Shaders' if device == 'mps' else ''
+# print(f"Using device: {device} {device_name}")
 
 MODELS = [
     'roberta-large-mnli',
@@ -55,7 +55,7 @@ def classify_text(query, document):
         for label, score in zip(result["labels"], result["scores"]):
             label_scores[label].append(score)
     print(label_scores)
-    # Compute average scores
+
     avg_scores = {label: np.mean(scores) for label, scores in label_scores.items()}
     stance = max(avg_scores, key=avg_scores.get)
     stance_score = avg_scores[stance]
@@ -73,7 +73,7 @@ def classify_texts(query, documents):
     # hypothesis_template = "This text is {} the statement: '" + query + "'"
     hypothesis_template = "The opinion in this text is {} \n the claim: '" + query + "'"
 
-    document_scores = [[] for _ in documents]  # Each doc gets a list of label score dicts
+    document_scores = [[] for _ in documents]
 
     for model_name, classifier in loaded_classifiers.items():
         shuffled_labels = LABELS.copy()[:]
@@ -90,7 +90,7 @@ def classify_texts(query, documents):
 
     final_results = []
     for scores_list in document_scores:
-        # Average scores for this document
+
         avg_scores = {
             label: np.mean([scores[label] for scores in scores_list])
             for label in LABELS
