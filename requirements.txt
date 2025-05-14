@@ -1,6 +1,7 @@
 appnope==0.1.4
 asttokens==3.0.0
 blinker==1.9.0
+build==1.2.2.post1
 certifi==2025.4.26
 charset-normalizer==3.4.2
 click==8.1.8
@@ -40,6 +41,7 @@ psutil==7.0.0
 ptyprocess==0.7.0
 pure_eval==0.2.3
 Pygments==2.19.1
+pyproject_hooks==1.2.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
 PyYAML==6.0.2
@@ -64,5 +66,6 @@ transformers==4.51.3
 typing_extensions==4.13.2
 tzdata==2025.2
 urllib3==2.4.0
+waitress==3.0.2
 wcwidth==0.2.13
 Werkzeug==3.1.3
