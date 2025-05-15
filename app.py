@@ -1,10 +1,18 @@
 import time
 from flask import Flask, json, request
+import pandas as pd
 
 from classifier import classify_text, classify_texts
 from search import search_func
 
+from config import config
+
 app = Flask(__name__)
+
+with open(config.METADATA_PATH, 'r', encoding='utf-8') as f:
+    articles = json.load(f)
+
+df = pd.DataFrame(articles)
 
 
 @app.route("/")
@@ -23,15 +31,12 @@ def classify():
     # start_time = time.time()
     query = request.args.get('query')
     url = request.args.get('url')
-    
-    with open('test_metadata.json', 'r', encoding='utf-8') as f:
-        articles = json.load(f)
-    for article in articles:
-        if article['url'] == url:
-            doc = article
-            break
-    else:
+
+    doc = df.loc[df['url'] == url].to_dict('records')
+
+    if not doc:
         return json.dumps({"error": "Document not found"}), 404
+    doc = doc[0]
     
     classification = classify_text(query=query, document=(doc["title"] + '\n' + doc['summary']))
 
@@ -44,8 +49,7 @@ def classify_bundle():
 
     data = request.get_json()
     query = request.args.get('query')
-    with open('test_metadata.json', 'r', encoding='utf-8') as f:
-        articles = json.load(f)
+
     print("Time to load metadata:", time.time() - start_time)
 
     url_to_doc = {article['url']: ((article["title"] or '') + '\n' + (article['summary'] or '')) for article in articles}

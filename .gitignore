@@ -234,3 +234,6 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,macos,windows
 output.json
+articles_database.json
+articles_embeddings.npy
+articles_metadata.json

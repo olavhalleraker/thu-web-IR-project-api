@@ -1,6 +1,7 @@
 from transformers import pipeline
 import torch
 import numpy as np
+from config import config
 
 # ---------- Setup ----------
 if torch.backends.mps.is_available():
@@ -9,11 +10,6 @@ elif torch.cuda.is_available():
     device = 'cuda'
 else:
     device = 'cpu'
-
-SCORE_THRESHOLD = 0.4
-
-# device_name = torch.cuda.get_device_name(0) if device == 'cuda' else 'Metal Performance Shaders' if device == 'mps' else ''
-# print(f"Using device: {device} {device_name}")
 
 MODELS = [
     'roberta-large-mnli',
@@ -59,7 +55,7 @@ def classify_text(query, document):
     avg_scores = {label: np.mean(scores) for label, scores in label_scores.items()}
     stance = max(avg_scores, key=avg_scores.get)
     stance_score = avg_scores[stance]
-    if stance_score < SCORE_THRESHOLD:
+    if stance_score < config.SCORE_THRESHOLD:
         stance = "neutral to"
 
 
@@ -99,7 +95,7 @@ def classify_texts(query, documents):
         stance_score = avg_scores[stance]
         
         stance_value = -1 if stance == "against" else 1 if stance == "in favor of" else 0
-        if stance_score < SCORE_THRESHOLD:
+        if stance_score < config.SCORE_THRESHOLD:
             stance_value = 0
         final_results.append((round(stance_score, 3), stance_value))
 
