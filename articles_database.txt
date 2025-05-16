@@ -1,2 +1,0 @@
-# ZIP of JSON files from articles and the .npy matrix of embeddings for the search and classification functions
-https://drive.google.com/file/d/1ymyDMv4RadUtBdAZJSOfhlK1-O8RFr8v/view?usp=drive_link
