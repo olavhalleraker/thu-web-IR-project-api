@@ -1,14 +1,14 @@
 # 🔍 BiasSearch API - Tsinghua Web Information Retrieval Project
 
-This repository (`thu-web-IR-project-api`) provides the backend API for the **BiasSearch** project, an AI-powered news article search engine that retrieves articles relevant to a user's query and classifies them as **in favor**, **against**, or **neutral** with respect to that query. It is developed for the **Web Information Retrieval** course at **Tsinghua University**.
+This repository ([`thu-web-IR-project-api`](https://github.com/olavhalleraker/thu-web-IR-project-api)) provides the backend API for the **BiasSearch** project, an AI-powered news article search engine that retrieves articles relevant to a user's query and classifies them as **in favor**, **against**, or **neutral** with respect to that query. It is developed for the **Web Information Retrieval** course at **Tsinghua University**.
 
-This frontend connects with the frontend (hosted in the `thu-web-IR-project-webapp repository`) and includes the underlying logic for the system, it handles:
+This repository handles:
 
 - **News article search** using semantic embeddings and cosine similarity.
 - **Stance classification** relative to the search query using zero-shot language models.
 - **API endpoints** that connect to the frontend (`webapp`) interface.
 
-The frontend web application (in a separate repository) connects to this API to retrieve and display search results with their classifications
+The frontend web application (hosted in the [`thu-web-IR-project-webapp repository`](https://github.com/olavhalleraker/thu-web-IR-project-webapp)) connects to this API to retrieve and display search results with their classifications
 
 
 ## System Overview
@@ -72,9 +72,9 @@ python -m build --wheel
 
 waitress-serve --host=0.0.0.0 --port=8000 app:app
 
-For macOS, run the following command to find you IP-adress:
-```ipconfig getifaddr en0```
-http://{IP-address}:8000 is the address others can access.
+# For macOS, run the following command to find you IP-adress:
+ipconfig getifaddr en0
+# http://{IP-address}:8000 is the address others can access.
 ```
 ---
 
@@ -139,6 +139,10 @@ See `config.py` for paths, thresholds, and settings. Key parameters:
 - File paths for embeddings and metadata
 
 ---
+**Related repositories**  
+[`thu-web-IR-project-webapp repository`](https://github.com/olavhalleraker/thu-web-IR-project-webapp)   
+[`thu-web-IR-project-crawler repository`](https://github.com/olavhalleraker/thu-web-IR-project-crawler)
+
 Olav Larsen Halleraker  
 Guillermo Rodrigo Pérez  
 Project for Web Information Retrieval — Tsinghua University 2024/2025
