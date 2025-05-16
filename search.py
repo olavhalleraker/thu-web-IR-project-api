@@ -9,6 +9,7 @@ with open(config.METADATA_PATH, 'r', encoding='utf-8') as f:
     articles = json.load(f)
 embeddings = np.load(config.EMBEDDINGS_PATH)
 
+# Create a DataFrame from metadata
 df = pd.DataFrame(articles)
 df['lastmod'] = pd.to_datetime(df['lastmod'], errors='coerce')
 df['image_url'] = df.get('image_url', pd.Series([''] * len(df))).fillna('')
@@ -17,9 +18,6 @@ def search_func(query):
     """
     Search for the query using cosine vector search.
     """
-
-    # Create a DataFrame from metadata
-
 
     # Compute query embedding
     query = query.strip() if query.strip() else "."
@@ -30,7 +28,7 @@ def search_func(query):
 
     # Sort by similarity and return the top n_results
     df['similarity'] = similarities
-    results = df[df['similarity'] > 0.3].sort_values(by='similarity', ascending=False).head(config.NUMBER_OF_RESULTS)
+    results = df[df['similarity'] > config.SIMILARITY_THRESHOLD].sort_values(by='similarity', ascending=False).head(config.NUMBER_OF_RESULTS)
 
     # Convert results to a list of dictionaries
     results_list = []

@@ -8,9 +8,9 @@ from typing import List, Dict
 # Configuration
 MODEL_NAME = 'sentence-transformers/all-MiniLM-L6-v2'
 BATCH_SIZE = 128
-INPUT_FILE = 'test.json'
-OUTPUT_JSON = 'test_metadata.json'
-OUTPUT_EMBEDDINGS = 'test_embeddings.npy'
+INPUT_FILE = 'articles/articles_database.json'
+OUTPUT_JSON = 'articles/articles_metadata.json'
+OUTPUT_EMBEDDINGS = 'articles/articles_embeddings.npy'
 TITLE_WEIGHT = 0.7
 SUMMARY_WEIGHT = 0.3
 
