@@ -237,3 +237,5 @@ output.json
 articles_database.json
 articles_embeddings.npy
 articles_metadata.json
+
+testing/

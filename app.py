@@ -9,8 +9,12 @@ from config import config
 
 app = Flask(__name__)
 
-with open(config.METADATA_PATH, 'r', encoding='utf-8') as f:
-    articles = json.load(f)
+try:
+    with open(config.METADATA_PATH, 'r', encoding='utf-8') as f:
+        articles = json.load(f)
+except FileNotFoundError:
+    print(f"Not connected to data fi: {config.METADATA_PATH}")
+    articles = []
 
 df = pd.DataFrame(articles)
 

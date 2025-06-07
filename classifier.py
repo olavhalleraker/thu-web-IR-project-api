@@ -14,10 +14,11 @@ else:
 MODELS = [
     'roberta-large-mnli',
     'facebook/bart-large-mnli',
-    'MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli'
+    # 'MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli'
 ]
 
 LABELS = ["in favor of", "against", "neutral to"]
+# LABELS = ["entailing", "neutral to",  "contradicting"]
 
 # ---------- Load Models ----------
 print("Loading models...")
@@ -33,14 +34,16 @@ print("All models loaded.\n")
 
 
 # ---------- Classification Function ----------
-def classify_text(query, document):
+def classify_text(query, document, score_threshold=config.SCORE_THRESHOLD):
     """
     Returns the average score for the most likely label across models.
     Only one document and one query are expected.
     """
     label_scores = {label: [] for label in LABELS}
 
+    # hypothesis_template = "This text is {} the statement: '" + query + "'"
     hypothesis_template = "This text is {} the statement: '" + query + "'"
+
 
     for model_name, classifier in loaded_classifiers.items():
         result = classifier(
@@ -50,53 +53,57 @@ def classify_text(query, document):
         )
         for label, score in zip(result["labels"], result["scores"]):
             label_scores[label].append(score)
-    print(label_scores)
 
     avg_scores = {label: np.mean(scores) for label, scores in label_scores.items()}
     stance = max(avg_scores, key=avg_scores.get)
     stance_score = avg_scores[stance]
-    if stance_score < config.SCORE_THRESHOLD:
-        stance = "neutral to"
+
+    # if (stance == LABELS[2]
+
+    if stance_score < score_threshold:
+        stance = LABELS[1]
 
 
-    return (round(stance_score, 3), -1 if stance == "against" else 1 if stance == "in favor of" else 0)
+    return (round(stance_score, 3), -1 if stance == LABELS[2] else 1 if stance == LABELS[0] else 0)
 
-def classify_texts(query, documents):
+
+def classify_text_binary(query, document, score_threshold=config.SCORE_THRESHOLD):
     """
-    Classifies each document in relation to the query using multiple classifiers.
-    Returns a list of (score, stance) for each document.
-    """
-    # hypothesis_template = "This text is {} the statement: '" + query + "'"
-    hypothesis_template = "The opinion in this text is {} \n the claim: '" + query + "'"
+    Classifies stance as Agree, Disagree, or Neutral based on threshold.
 
-    document_scores = [[] for _ in documents]
+    Returns:
+        (stance_score, stance_label)
+            stance_score: float (confidence score of the selected stance)
+            stance_label: int (1 for Agree, -1 for Disagree, 0 for Neutral)
+    """
+    # Only consider two stance labels
+    stance_labels = [LABELS[0], LABELS[-1]]  # Assuming LABELS[0] = "Agree", LABELS[-1] = "Disagree"
+    label_scores = {label: [] for label in stance_labels}
+
+    hypothesis_template = "The stance of the document towards the statement '{}' is: {}".format(query, "{}")
 
     for model_name, classifier in loaded_classifiers.items():
-        shuffled_labels = LABELS.copy()[:]
-        results = classifier(
-            sequences=documents,
-            candidate_labels=shuffled_labels,
+        result = classifier(
+            sequences=document,
+            candidate_labels=stance_labels,
             hypothesis_template=hypothesis_template
         )
-        for i, res in enumerate(results):
-            label_score = {label: 0.0 for label in LABELS}
-            for label, score in zip(res["labels"], res["scores"]):
-                label_score[label] = score
-            document_scores[i].append(label_score)
+        for label, score in zip(result["labels"], result["scores"]):
+            label_scores[label].append(score)
 
-    final_results = []
-    for scores_list in document_scores:
+    # Average the scores across models
+    avg_scores = {label: np.mean(scores) for label, scores in label_scores.items()}
 
-        avg_scores = {
-            label: np.mean([scores[label] for scores in scores_list])
-            for label in LABELS
-        }
-        stance = max(avg_scores, key=avg_scores.get)
-        stance_score = avg_scores[stance]
-        
-        stance_value = -1 if stance == "against" else 1 if stance == "in favor of" else 0
-        if stance_score < config.SCORE_THRESHOLD:
-            stance_value = 0
-        final_results.append((round(stance_score, 3), stance_value))
+    print(label_scores)
 
-    return final_results
+    stance = max(avg_scores, key=avg_scores.get)
+    stance_score = avg_scores[stance]
+
+    # Apply threshold: force Neutral if below threshold
+    if stance_score < score_threshold:
+        return (round(stance_score, 3), 0)  # Neutral
+
+    # Map stance to label
+    stance_label = 1 if stance == stance_labels[0] else -1
+
+    return (round(stance_score, 3), stance_label)

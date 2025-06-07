@@ -3,11 +3,10 @@
 class Config:
     DEBUG = False
     TESTING = False
-    METADATA_PATH = 'articles/articles_metadata.json'
-    EMBEDDINGS_PATH = 'articles/articles_embeddings.npy'
-    NUMBER_OF_RESULTS = 10000 # Top-k Number of results retrieved
-    SIMILARITY_THRESHOLD = 0.3 # Filter for similarity of the results related to the query
-    SCORE_THRESHOLD = 0.5 # Condifence below which articles are automatically labeled as 'neutral'
+    METADATA_PATH = 'articles_metadata.json'
+    EMBEDDINGS_PATH = 'articles_embeddings.npy'
+    NUMBER_OF_RESULTS = 10000
+    SCORE_THRESHOLD = 0.5
 
 
 class DevelopmentConfig(Config):
