@@ -3,10 +3,11 @@
 class Config:
     DEBUG = False
     TESTING = False
-    METADATA_PATH = 'articles_metadata.json'
-    EMBEDDINGS_PATH = 'articles_embeddings.npy'
+    METADATA_PATH = 'articles/articles_metadata.json'
+    EMBEDDINGS_PATH = 'articles/articles_embeddings.npy'
     NUMBER_OF_RESULTS = 10000
     SCORE_THRESHOLD = 0.5
+    SIMILARITY_THRESHOLD = 0.2
 
 
 class DevelopmentConfig(Config):
